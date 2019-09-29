@@ -39,10 +39,15 @@ def normal(update, context):
         res = requests.get(url)
         if res.ok:
             jData = json.loads(res.content)
+            reply_vec = []
             for stat in jData:
-                if stat != 'QUERY_INFO':
-                    reply = "Station: {}, distance {} km.".format(stat, jData[stat][0]['distance'])
-                    context.bot.send_message(chat_id=update.message.chat_id, text=reply)                
+                if stat != 'QUERY_INFO': #QUERY_INFO is the query's own GPS coordinates
+                    reply = "Station: {} {}, distance {} km.".format(stat, jData[stat][0]['buss_fullLineID'][0], jData[stat][0]['distance'])
+                    dist = int(jData[stat][0]['distance'])
+                    reply_vec.append([reply, dist])
+            reply_vec.sort(key=lambda x: x[1]) #We sort the stations in accordance to distance
+            for elem in reply_vec: #print them out in order of closest station first
+                context.bot.send_message(chat_id=update.message.chat_id, text=elem[0])                
         else:
             context.bot.send_message(chat_id=update.message.chat_id, text="Failed to return stations. Tip: Try adding \"Maryland\" to your address.")
     else:
