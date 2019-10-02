@@ -7,7 +7,7 @@ with open('../../dev/UMD_SB_Bot.txt') as f:
 updater = Updater(token=API_TOKEN, use_context=True)
 
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename='UMD_SB_BOT.log', filemode='a', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename='/home/pi/telBot/UMD_SB_Bot/UMD_SB.log', filemode='a', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
@@ -34,11 +34,11 @@ def normal(update, context):
         context.bot.send_message(chat_id=update.message.chat_id, text="Write /start to begin checking addresses!")
 
     elif state == 1:
-        logger.info(" %s searched for address: %s", user.first_name, update.message.text)
+        logger.info("Searched for address: %s",  update.message.text)
         url = "http://hh4rapi-env.6gsmdkiciw.us-east-2.elasticbeanstalk.com/json/{}/10".format(update.message.text)
         res = requests.get(url)
         if res.ok:
-            jData = json.loads(res.content)
+            jData = json.loads(res.content.decode('utf-8'))
             reply_vec = []
             for stat in jData:
                 if stat != 'QUERY_INFO': #QUERY_INFO is the query's own GPS coordinates
